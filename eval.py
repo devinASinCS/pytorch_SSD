@@ -36,7 +36,7 @@ def str2bool(v):
 parser = argparse.ArgumentParser(
     description='Single Shot MultiBox Detector Evaluation')
 parser.add_argument('--trained_model',
-                    default='weights/ssd300_mAP_77.43_v2.pth', type=str,
+                    default='weights/VOC.pth', type=str,
                     help='Trained state_dict file path to open')
 parser.add_argument('--save_folder', default='eval/', type=str,
                     help='File path to save results')
@@ -66,12 +66,12 @@ if torch.cuda.is_available():
 else:
     torch.set_default_tensor_type('torch.FloatTensor')
 
-annopath = os.path.join(args.voc_root, 'VOC2007', 'Annotations', '%s.xml')
-imgpath = os.path.join(args.voc_root, 'VOC2007', 'JPEGImages', '%s.jpg')
-imgsetpath = os.path.join(args.voc_root, 'VOC2007', 'ImageSets',
-                          'Main', '{:s}.txt')
-YEAR = '2007'
-devkit_path = args.voc_root + 'VOC' + YEAR
+#voc_root = D:\pytorch_ssd\data\VOCdevkit
+annopath = os.path.join(args.voc_root, 'MAFA', 'Annotations', '%s.xml')
+imgpath = os.path.join(args.voc_root, 'MAFA', 'JPEGImages', '%s.jpg')
+imgsetpath = os.path.join(args.voc_root, 'MAFA', 'ImageSets', 'Main') + os.sep + '{:s}.txt'
+YEAR = 'MAFA'
+devkit_path = args.voc_root + YEAR
 dataset_mean = (104, 117, 123)
 set_type = 'test'
 
@@ -112,10 +112,10 @@ def parse_rec(filename):
         obj_struct['truncated'] = int(obj.find('truncated').text)
         obj_struct['difficult'] = int(obj.find('difficult').text)
         bbox = obj.find('bndbox')
-        obj_struct['bbox'] = [int(bbox.find('xmin').text) - 1,
-                              int(bbox.find('ymin').text) - 1,
-                              int(bbox.find('xmax').text) - 1,
-                              int(bbox.find('ymax').text) - 1]
+        obj_struct['bbox'] = [int(float(bbox.find('xmin').text)) - 1,
+                              int(float(bbox.find('ymin').text)) - 1,
+                              int(float(bbox.find('xmax').text)) - 1,
+                              int(float(bbox.find('ymax').text)) - 1]
         objects.append(obj_struct)
 
     return objects
@@ -426,7 +426,7 @@ if __name__ == '__main__':
     net.eval()
     print('Finished loading model!')
     # load data
-    dataset = VOCDetection(args.voc_root, [('2007', set_type)],
+    dataset = VOCDetection(args.voc_root, [('MAFA', set_type)],
                            BaseTransform(300, dataset_mean),
                            VOCAnnotationTransform())
     if args.cuda:
