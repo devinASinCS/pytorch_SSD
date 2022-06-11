@@ -37,7 +37,7 @@ if not os.path.exists(args.save_folder):
 
 def test_net(save_folder, net, cuda, testset, transform, thresh):
     # dump predictions and assoc. ground truth to text file for now
-    filename = save_folder+'test1.txt'
+    filename = save_folder+'sessd_test.txt'
     num_images = len(testset)
     for i in range(num_images):
         print('Testing image {:d}/{:d}....'.format(i+1, num_images))
